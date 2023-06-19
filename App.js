@@ -1,20 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import {View} from 'react-native';
+import Estilos from './componets/estilo'
+import imageOff from './componets/imageOff';
+import imageOn from './componets/imageOn';
+import { ref, onValue } from "firebase/database";
+import {db} from './componets/config';
 
 export default function App() {
+
+  const [toggle, setToggle] = useState()
+  console.log(toggle)
+
+  useEffect(()=>{
+    const starCountRef = ref(db, 'lampada/');
+
+    onValue(starCountRef, (snapshot) => {
+      const data = snapshot.val();
+      setToggle(data.lampada)
+    });
+  })
+    
+ function exibir(){
+    if(toggle == "on"){
+      return(imageOn())
+    }else{
+      return(imageOff())
+    } 
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={Estilos.container}>
+      {exibir()}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
